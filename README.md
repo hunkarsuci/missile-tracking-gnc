@@ -2,7 +2,7 @@
 
 End-to-end missile target tracking and guidance simulation using Kalman filtering, EKF, maneuver models, and proportional navigation.
 
-This repository is built step-by-step, starting from physical system modeling and progressing toward a full closed-loop missile guidance simulation and real-time C++ implementation.
+This repository is built step-by-step, starting from physical system modeling and progressing toward a full closed-loop missile guidance simulation via Python and real-time C++ implementation.
 
 ---
 
