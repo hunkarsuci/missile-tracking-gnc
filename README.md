@@ -28,8 +28,7 @@ Each block is implemented incrementally and committed separately.
 
 ```text
 src/
-  block0_modeling/
-    simulate_cv_target.py    # Target truth model + noisy measurements
+  block0_modeling/           # Target truth model + noisy measurements
   block1_kf/                 # Linear Kalman Filter 
   block2_process_noise/      # Maneuver models 
   block3_ekf/                # Radar EKF 
