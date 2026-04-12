@@ -18,7 +18,7 @@ The project covers:
 - Proportional Navigation (PN) guidance
 - Missile dynamics and autopilot effects
 - 2D/3D visualization
-- Real-time C++ implementation
+- Real-time implementation
 
 Each block is implemented incrementally and committed separately.
 
