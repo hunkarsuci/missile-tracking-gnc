@@ -1,159 +1,175 @@
-# Target Tracking and GNC Simulation with KF/EKF
+# 3D Target Tracking and GNC Simulation with KF/EKF
 
-<<<<<<< HEAD
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![NumPy](https://img.shields.io/badge/NumPy-Scientific%20Computing-013243?logo=numpy&logoColor=white)](https://numpy.org/)
 [![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557C)](https://matplotlib.org/)
-[![Tests](https://github.com/HunkarSuci/missile-tracking-gnc/actions/workflows/tests.yml/badge.svg)](https://github.com/HunkarSuci/missile-tracking-gnc/actions/workflows/tests.yml)
+[![CI Tests](https://github.com/hunkarsuci/missile-tracking-gnc/actions/workflows/tests.yml/badge.svg)](https://github.com/hunkarsuci/missile-tracking-gnc/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Project Status](https://img.shields.io/badge/Status-In%20Development-yellow)](#roadmap)
 
-End-to-end missile target tracking and guidance simulations using motion models, noisy sensor measurements, Kalman filtering, 2D/3D radar EKF estimation, and professional visualization.
-=======
-A Python-based target tracking and estimation project focused on **Guidance, Navigation, and Control (GNC)** fundamentals, Kalman filtering, radar measurement modeling, and maneuvering target simulation.
+An educational Python project for target tracking, radar measurement modeling, Kalman filtering, Extended Kalman filtering, and Guidance, Navigation, and Control (GNC) simulation concepts.
 
-The repository is organized as an incremental engineering study. Each block introduces one additional concept, starting from simple target motion modeling and progressing toward nonlinear radar-based tracking with an Extended Kalman Filter (EKF).
+The current main demo is a **3D radar-EKF tracking simulation**. A target climbs from ground level to 10 km altitude, drops to 8 km, recovers to 9 km, and then continues mostly horizontally while a 3D Extended Kalman Filter estimates its position from noisy radar measurements.
 
-> This project is intended for educational, research, and portfolio purposes. It is not an operational weapon system, real-world guidance implementation, or safety-critical control system.
->>>>>>> df9732eda7d89f4ed915c91ca46445202376e274
+> This repository is for education, research, and portfolio demonstration only. It is not an operational weapon system, real-world guidance implementation, targeting system, or safety-critical control system.
 
-The repository is organized as an incremental engineering build: start from physical system modeling, add estimators and maneuver models, then move toward closed-loop guidance and real-time implementation.
-
-<<<<<<< HEAD
-## Demo
+## 3D Demo
 
 ![3D radar-EKF tracking animation](assets/tracking_3d.gif)
+
+The animation shows three signals:
+
+- **Truth**: the simulated target trajectory
+- **Radar measurements**: noisy range/azimuth/elevation observations converted to Cartesian coordinates for plotting
+- **EKF estimate**: the filter's estimated 3D target position
 
 ## System Architecture
 
 ![Missile tracking and guidance system architecture](assets/system_architecture.svg)
-=======
-## Overview
 
-This project demonstrates the core estimation pipeline used in many aerospace, robotics, radar, and autonomous-systems applications:
+## What This Project Demonstrates
 
-1. Generate target ground truth
-2. Simulate noisy sensor measurements
-3. Estimate target state using Kalman filtering
-4. Study the effect of process-noise tuning during maneuvers
-5. Track a target using nonlinear radar range-bearing measurements with an EKF
+This project is organized as a step-by-step estimation pipeline:
 
-The implemented simulations focus on 2D target tracking with position, velocity, and radar measurements.
+1. Simulate target motion.
+2. Generate noisy measurements.
+3. Estimate position and velocity with Kalman filtering.
+4. Add target maneuvers and process-noise tuning.
+5. Use nonlinear radar measurements with an EKF.
+6. Extend the tracking problem from 2D to 3D.
+7. Visualize the result with plots, a 3D animation, tests, and CI.
 
----
+The early blocks are intentionally simpler 2D examples. They build the mathematical foundation for the final 3D radar-EKF demo.
 
-## Implemented Blocks
+## Current Capabilities
 
-### Block 0 — Constant-Velocity Target Model
+- 2D constant-velocity target simulation
+- Noisy Cartesian position measurements
+- Linear Kalman Filter for 2D position/velocity estimation
+- Maneuvering target model with acceleration inputs
+- Process-noise tuning demonstration
+- 2D radar EKF with range-bearing measurements
+- 3D radar EKF with range, azimuth, and elevation measurements
+- 3D target trajectory with climb, descent, recovery, and horizontal continuation
+- GitHub README animation GIF
+- System architecture SVG
+- Pytest test suite
+- GitHub Actions CI tests
 
-Implements a 2D constant-velocity target motion model.
+## Main 3D Tracking Model
+
+The 3D EKF tracks this state:
 
 ```text
-State: x = [px, py, vx, vy]^T
+x = [px, py, pz, vx, vy, vz]^T
 ```
 
 where:
 
-- `px`, `py`: target position components
-- `vx`, `vy`: target velocity components
+- `px, py, pz` are target position components in meters
+- `vx, vy, vz` are target velocity components in meters per second
 
-The block also generates noisy Cartesian position measurements:
-
-```text
-z = [px, py] + measurement_noise
-```
-
-This block establishes the ground-truth trajectory and basic sensor model used by later simulations.
-
----
-
-### Block 1 — Linear Kalman Filter for CV Tracking
-
-Implements a discrete-time linear Kalman Filter for a 2D constant-velocity model.
+The radar measurement is:
 
 ```text
-State:       x = [px, py, vx, vy]^T
-Measurement: z = [px, py]^T
+z = [range, azimuth, elevation]^T
 ```
 
-The filter includes:
+where:
 
-- State prediction using a constant-velocity transition matrix
-- Position-only measurement update
-- Discrete white-acceleration process-noise model
-- Measurement-noise covariance
-- Joseph-form covariance update for numerical stability
-- RMSE calculation for tracking-performance evaluation
+- `range` is the 3D distance from radar to target
+- `azimuth` is the horizontal bearing angle
+- `elevation` is the vertical angle above the horizontal plane
 
-This block demonstrates how noisy position measurements can be fused over time to estimate both position and velocity.
+The EKF uses a constant-velocity prediction model and nonlinear radar measurement updates. The process-noise tuning allows the filter to respond to the target's climb, drop, re-climb, and curved motion.
 
----
+## Implemented Blocks
 
-### Block 2 — Maneuvering Target and Process-Noise Tuning
+### Block 0 - Target Motion and Noisy Measurements
 
-Extends the target model with piecewise-constant acceleration maneuvers.
+File: `src/block0_modeling/simulate_cv_target.py`
+
+This block introduces a 2D constant-velocity target:
+
+```text
+x = [px, py, vx, vy]^T
+```
+
+It generates the ground-truth trajectory and noisy Cartesian position measurements. This is the simplest place to understand the state vector and measurement noise.
+
+### Block 1 - Linear Kalman Filter
+
+Files:
+
+- `src/block1_kf/linear_kf_cv.py`
+- `src/block1_kf/run_kf_cv_demo.py`
+
+This block estimates target position and velocity from noisy 2D position measurements:
+
+```text
+measurement = [px, py]^T
+```
+
+It demonstrates prediction, measurement update, Kalman gain, covariance propagation, Joseph-form covariance update, and RMSE evaluation.
+
+### Block 2 - Maneuvering Target and Process Noise
+
+Files:
+
+- `src/block2_process_noise/simulate_maneuver_target.py`
+- `src/block2_process_noise/run_kf_process_noise_demo.py`
+
+This block adds acceleration maneuvers:
 
 ```text
 x[k+1] = F x[k] + B a[k]
 ```
 
-where:
+It shows why process noise matters. Low process noise gives smoother estimates but reacts slowly to maneuvers. Higher process noise follows maneuvers faster but can look noisier.
 
-- `F`: constant-velocity state-transition matrix
-- `B`: acceleration input matrix
-- `a[k]`: applied target acceleration
+### Block 3 - Radar EKF in 2D and 3D
 
-The same constant-velocity Kalman Filter is tested with different process-noise values.
+Files:
 
-This block shows the tradeoff between:
+- `src/block3_ekf/extended_kf_radar.py`
+- `src/block3_ekf/simulate_radar_measurements.py`
+- `src/block3_ekf/run_ekf_radar_demo.py`
+- `src/block3_ekf/extended_kf_radar_3d.py`
+- `src/block3_ekf/simulate_radar_measurements_3d.py`
 
-- Low process noise: smoother estimates but slower response to maneuvers
-- High process noise: faster maneuver response but noisier estimates
-
----
-
-### Block 3 — Radar Extended Kalman Filter
-
-Implements an Extended Kalman Filter for nonlinear radar measurements.
+The 2D radar EKF uses:
 
 ```text
-State:       x = [px, py, vx, vy]^T
-Measurement: z = [range, bearing]^T
+state       = [px, py, vx, vy]^T
+measurement = [range, bearing]^T
 ```
 
-The nonlinear radar measurement model is:
+The 3D radar EKF uses:
 
 ```text
-range   = sqrt((px - sx)^2 + (py - sy)^2)
-bearing = atan2(py - sy, px - sx)
+state       = [px, py, pz, vx, vy, vz]^T
+measurement = [range, azimuth, elevation]^T
 ```
 
-where `(sx, sy)` is the radar position.
+These files contain the nonlinear radar measurement functions, analytical Jacobians, angle wrapping, prediction step, update step, and radar-to-Cartesian conversion helpers.
 
-The EKF implementation includes:
+### Block 4 - 3D Animation and Scenario Builder
 
-- Nonlinear range-bearing measurement function
-- Analytical measurement Jacobian
-- Angle wrapping for bearing residuals
-- Prediction and correction steps
-- Joseph-form covariance update
-- Radar-to-Cartesian conversion for visualization
-- RMSE evaluation for position and velocity estimates
+File: `src/block4_visualization/animate_3d_tracking.py`
 
-This block demonstrates nonlinear sensor fusion using radar-style measurements.
->>>>>>> df9732eda7d89f4ed915c91ca46445202376e274
+This is the main public-facing demo. It builds a repeatable 3D scenario:
 
-## Features
-
-- Constant-velocity target truth model and noisy position measurements
-- Linear Kalman Filter for Cartesian position and velocity tracking
-- Maneuvering target simulation with process noise
-- Radar range-bearing measurement model
-- Extended Kalman Filter for nonlinear radar tracking
-- 3D radar EKF demo with range, azimuth, elevation, a 0-to-10 km climb, an 8 km dip, a 9 km recovery, and horizontal continuation
-- Animated tracking visualization for GitHub demos and presentations
+- Start near `0 km` altitude
+- Climb to about `10 km`
+- Drop to about `8 km`
+- Recover to about `9 km`
+- Continue mostly horizontally for about `1 km`
+- Track the target with the 3D radar EKF
+- Render the result as an interactive Matplotlib animation or GIF
 
 ## Quick Start
+
+Create an environment and install dependencies:
 
 ```bash
 python -m venv .venv
@@ -167,112 +183,7 @@ Run the test suite:
 pytest -q
 ```
 
-Run the existing 2D demos:
-
-```bash
-python src/block0_modeling/simulate_cv_target.py
-python src/block1_kf/run_kf_cv_demo.py
-python src/block3_ekf/run_ekf_radar_demo.py
-```
-
-Run the 3D animation:
-
-```bash
-python src/block4_visualization/animate_3d_tracking.py
-```
-
-Save the 3D animation as a GIF:
-
-```bash
-python src/block4_visualization/animate_3d_tracking.py --save assets/tracking_3d.gif --no-show
-```
-
-## Repository Structure
-
-```text
-<<<<<<< HEAD
-src/
-  block0_modeling/
-    simulate_cv_target.py             # Target truth model + noisy measurements
-  block1_kf/
-    linear_kf_cv.py                   # Linear Kalman Filter implementation
-    run_kf_cv_demo.py                 # 2D KF tracking demo
-  block2_process_noise/
-    simulate_maneuver_target.py       # Maneuvering target model
-    run_kf_process_noise_demo.py      # Process-noise tuning demo
-  block3_ekf/
-    extended_kf_radar.py              # Radar EKF implementation
-    extended_kf_radar_3d.py           # 3D radar EKF implementation
-    simulate_radar_measurements.py    # Range-bearing measurement model
-    simulate_radar_measurements_3d.py # Range-azimuth-elevation model
-    run_ekf_radar_demo.py             # 2D radar-EKF demo
-  block4_visualization/
-    animate_3d_tracking.py            # 3D tracking animation
-tests/
-  test_models.py                       # Motion-model and measurement tests
-  test_filters.py                      # KF, EKF, and radar geometry tests
-  test_visualization.py                # 3D scenario and animation smoke tests
-assets/
-  system_architecture.svg              # Repository architecture diagram
-  tracking_3d.gif                      # GitHub README animation
-.github/workflows/
-  tests.yml                            # Pytest CI workflow
-```
-
-## Roadmap
-
-- Proportional Navigation guidance
-- Missile dynamics and autopilot effects
-- Closed-loop interceptor-target engagement simulation
-- Real-time C++ implementation
-- Formatting and linting checks
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-=======
-missile-tracking-gnc/
-│
-├── src/
-│   ├── block0_modeling/
-│   │   └── simulate_cv_target.py
-│   │
-│   ├── block1_kf/
-│   │   ├── linear_kf_cv.py
-│   │   └── run_kf_cv_demo.py
-│   │
-│   ├── block2_process_noise/
-│   │   ├── simulate_maneuver_target.py
-│   │   └── run_kf_process_noise_demo.py
-│   │
-│   └── block3_ekf/
-│       ├── extended_kf_radar.py
-│       ├── simulate_radar_measurements.py
-│       └── run_ekf_radar_demo.py
-│
-├── README.md
-├── LICENSE
-└── .gitignore
-```
-
----
-
-## How to Run
-
-Clone the repository:
-
-```bash
-git clone https://github.com/hunkarsuci/missile-tracking-gnc.git
-cd missile-tracking-gnc
-```
-
-Install dependencies:
-
-```bash
-pip install numpy matplotlib
-```
-
-Run the individual simulation blocks:
+Run the 2D learning demos:
 
 ```bash
 python src/block0_modeling/simulate_cv_target.py
@@ -281,116 +192,94 @@ python src/block2_process_noise/run_kf_process_noise_demo.py
 python src/block3_ekf/run_ekf_radar_demo.py
 ```
 
----
+Run the 3D radar-EKF animation:
 
-## Simulation Outputs
+```bash
+python src/block4_visualization/animate_3d_tracking.py
+```
 
-The demo scripts generate time-domain and 2D trajectory plots, including:
+Regenerate the README GIF:
 
-- True target trajectory
-- Noisy Cartesian measurements
-- Kalman Filter position and velocity estimates
-- Maneuvering target response under different process-noise assumptions
-- Radar range and bearing measurements
-- EKF-estimated trajectory
-- Position and velocity tracking performance
-- Applied acceleration profile
+```bash
+python src/block4_visualization/animate_3d_tracking.py --save assets/tracking_3d.gif --no-show
+```
 
-The scripts also print RMSE values for position and velocity estimation performance.
+## Repository Guide
 
----
+```text
+src/
+  block0_modeling/
+    simulate_cv_target.py             # 2D target truth model and noisy measurements
+  block1_kf/
+    linear_kf_cv.py                   # Linear Kalman Filter class
+    run_kf_cv_demo.py                 # 2D KF demo script
+  block2_process_noise/
+    simulate_maneuver_target.py       # 2D maneuvering target model
+    run_kf_process_noise_demo.py      # Process-noise tuning demo
+  block3_ekf/
+    extended_kf_radar.py              # 2D radar EKF
+    extended_kf_radar_3d.py           # 3D radar EKF
+    simulate_radar_measurements.py    # 2D range-bearing radar model
+    simulate_radar_measurements_3d.py # 3D range-azimuth-elevation radar model
+    run_ekf_radar_demo.py             # 2D radar-EKF demo
+  block4_visualization/
+    animate_3d_tracking.py            # Main 3D radar-EKF animation
+tests/
+  test_models.py                      # Motion and measurement-model tests
+  test_filters.py                     # KF, EKF, and radar geometry tests
+  test_visualization.py               # 3D scenario and animation tests
+assets/
+  system_architecture.svg             # Architecture diagram shown in README
+  tracking_3d.gif                     # 3D animation shown in README
+.github/workflows/
+  tests.yml                           # GitHub Actions pytest workflow
+```
 
-## Technical Concepts Demonstrated
+## Testing and CI
 
-This project demonstrates practical knowledge of:
+The repository includes pytest tests for:
 
-- Target motion modeling
-- Discrete-time state-space systems
+- Target motion propagation
+- Measurement generation
+- Radar geometry conversions
+- 2D EKF measurement functions
+- 3D EKF measurement functions and Jacobian shape
+- 3D trajectory altitude profile
+- EKF tracking accuracy during the final curved section
+- Animation smoke testing without opening a display
+
+GitHub Actions runs the tests on Python 3.10, 3.11, and 3.12.
+
+## Technical Concepts
+
+- State-space modeling
+- Discrete-time simulation
 - Kalman filtering
 - Extended Kalman filtering
+- Nonlinear radar measurement models
+- Analytical Jacobians
+- Angle wrapping
 - Sensor fusion
-- Radar range-bearing measurements
-- Process-noise modeling
+- Process-noise tuning
 - Maneuvering-target tracking
-- Numerical simulation
-- RMSE-based performance evaluation
-- Python scientific computing
-- Modular simulation design
-
----
-
-## Current Scope
-
-Implemented:
-
-- 2D constant-velocity target simulation
-- Noisy Cartesian position measurements
-- Linear Kalman Filter for position/velocity estimation
-- Maneuvering target model with piecewise acceleration
-- Process-noise sensitivity study
-- Radar range-bearing measurement simulation
-- Extended Kalman Filter for nonlinear radar tracking
-- 2D and time-domain visualization
-
-Not currently implemented:
-
-- Closed-loop missile-target engagement simulation
-- Proportional Navigation guidance law
-- Missile autopilot or actuator dynamics
-- 3D engagement geometry
-- Real-time C++ implementation
-- Hardware-in-the-loop or safety-critical deployment
-
----
+- 3D trajectory visualization
+- RMSE and tracking-error evaluation
 
 ## Roadmap
 
-Possible future extensions:
-
-- Add Proportional Navigation guidance as a separate educational simulation block
-- Add simple interceptor point-mass dynamics
-- Extend the target and interceptor models to 3D
-- Compare KF, EKF, and UKF tracking performance
-- Add Monte Carlo analysis for estimator consistency
-- Save generated plots under a `figures/` directory
-- Add a `requirements.txt` file
-- Add unit tests for model and filter components
-- Add a C++ implementation of selected estimation blocks
-
----
-
-## Design Notes
-
-The project is intentionally block-based. This makes each concept easier to inspect, test, and extend:
-
-- Block 0 creates the basic truth and measurement model.
-- Block 1 introduces the linear Kalman Filter.
-- Block 2 studies how process noise affects tracking during maneuvers.
-- Block 3 introduces nonlinear radar measurements and EKF estimation.
-
-This structure makes the repository useful both as a learning project and as a portfolio demonstration for aerospace, robotics, estimation, and GNC-related roles.
-
----
-
-## Dependencies
-
-The project uses:
-
-- Python
-- NumPy
-- Matplotlib
-
----
+- Proportional Navigation guidance law
+- Interceptor point-mass dynamics
+- Missile autopilot and actuator effects
+- Closed-loop interceptor-target engagement simulation
+- Monte Carlo estimator consistency analysis
+- UKF or IMM comparison against EKF
+- Real-time C++ implementation
+- Formatting and linting checks
 
 ## License
 
-This project is released under the MIT License.
-
----
+This project is licensed under the [MIT License](LICENSE).
 
 ## Disclaimer
 
-This repository is for educational and portfolio purposes only.
-
-It does not provide an operational missile guidance system and must not be used for real-world weapon development, targeting, safety-critical control, or deployment.
->>>>>>> df9732eda7d89f4ed915c91ca46445202376e274
+This repository is for educational and portfolio purposes only. It does not provide an operational missile guidance system and must not be used for real-world weapon development, targeting, safety-critical control, or deployment.
