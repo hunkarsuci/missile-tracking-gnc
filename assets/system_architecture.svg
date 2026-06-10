@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">Missile Tracking and Guidance System Architecture</title>
+  <desc id="desc">Professional architecture diagram for the missile tracking and guidance simulation pipeline.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#24313d"/>
+    </marker>
+
+    <filter id="cardShadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#102030" flood-opacity="0.10"/>
+    </filter>
+
+    <style>
+      .canvas { fill: #f6f8fb; }
+      .panel { fill: #ffffff; stroke: #d7dee8; stroke-width: 1.5; rx: 18; filter: url(#cardShadow); }
+      .title { fill: #111827; font: 700 34px Arial, sans-serif; }
+      .subtitle { fill: #526170; font: 18px Arial, sans-serif; }
+      .section-label { fill: #6b7785; font: 700 13px Arial, sans-serif; letter-spacing: 1.4px; text-transform: uppercase; }
+      .card-title { fill: #111827; font: 700 20px Arial, sans-serif; }
+      .card-text { fill: #465564; font: 16px Arial, sans-serif; }
+      .card-small { fill: #607080; font: 14px Arial, sans-serif; }
+      .flow { fill: none; stroke: #24313d; stroke-width: 2.7; marker-end: url(#arrow); }
+      .flow-muted { fill: none; stroke: #6f8195; stroke-width: 2.2; stroke-dasharray: 7 7; marker-end: url(#arrow); }
+      .pill { rx: 18; }
+      .blue-fill { fill: #eef6ff; stroke: #1f77b4; }
+      .amber-fill { fill: #fff7e6; stroke: #f59e0b; }
+      .green-fill { fill: #eef8f1; stroke: #2e7d32; }
+      .red-fill { fill: #fff1f1; stroke: #d62728; }
+      .gray-fill { fill: #f8fafc; stroke: #2f3b46; }
+      .violet-fill { fill: #f4f1ff; stroke: #6d5dfc; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1280" height="760"/>
+
+  <text class="title" x="70" y="72">Missile Tracking and Guidance Architecture</text>
+  <text class="subtitle" x="70" y="104">Simulation pipeline from target motion and sensing to estimation, guidance, visualization, testing, and CI.</text>
+
+  <rect class="panel" x="54" y="138" width="1172" height="520"/>
+
+  <text class="section-label" x="92" y="184">Simulation Core</text>
+  <text class="section-label" x="92" y="540">Quality Gates</text>
+
+  <rect class="blue-fill" x="92" y="220" width="210" height="128" rx="14" stroke-width="2.5"/>
+  <text class="card-title" x="122" y="264">Target Dynamics</text>
+  <text class="card-text" x="122" y="298">CV and maneuver</text>
+  <text class="card-text" x="122" y="322">truth propagation</text>
+
+  <rect class="amber-fill" x="362" y="220" width="210" height="128" rx="14" stroke-width="2.5"/>
+  <text class="card-title" x="394" y="264">Sensor Models</text>
+  <text class="card-text" x="394" y="298">Noisy position</text>
+  <text class="card-text" x="394" y="322">range / az / elev</text>
+
+  <rect class="green-fill" x="632" y="220" width="210" height="128" rx="14" stroke-width="2.5"/>
+  <text class="card-title" x="674" y="264">Estimators</text>
+  <text class="card-text" x="674" y="298">Linear KF</text>
+  <text class="card-text" x="674" y="322">2D / 3D radar EKF</text>
+
+  <rect class="red-fill" x="902" y="220" width="210" height="128" rx="14" stroke-width="2.5"/>
+  <text class="card-title" x="945" y="264">Guidance</text>
+  <text class="card-text" x="945" y="298">PN law roadmap</text>
+  <text class="card-text" x="945" y="322">intercept commands</text>
+
+  <rect class="red-fill" x="902" y="408" width="210" height="128" rx="14" stroke-width="2.5"/>
+  <text class="card-title" x="932" y="452">Missile Dynamics</text>
+  <text class="card-text" x="932" y="486">Autopilot roadmap</text>
+  <text class="card-text" x="932" y="510">closed-loop response</text>
+
+  <rect class="blue-fill" x="632" y="408" width="210" height="128" rx="14" stroke-width="2.5"/>
+  <text class="card-title" x="673" y="452">Visualization</text>
+  <text class="card-text" x="673" y="486">2D plots</text>
+  <text class="card-text" x="673" y="510">3D animation GIF</text>
+
+  <rect class="gray-fill" x="362" y="560" width="210" height="72" rx="14" stroke-width="2.2"/>
+  <text class="card-title" x="410" y="590">Validation</text>
+  <text class="card-small" x="410" y="615">pytest numerical checks</text>
+
+  <rect class="violet-fill" x="92" y="560" width="210" height="72" rx="14" stroke-width="2.2"/>
+  <text class="card-title" x="139" y="590">GitHub CI</text>
+  <text class="card-small" x="139" y="615">Python 3.10 - 3.12</text>
+
+  <path class="flow" d="M 302 284 H 354"/>
+  <path class="flow" d="M 572 284 H 624"/>
+  <path class="flow" d="M 842 284 H 894"/>
+  <path class="flow" d="M 1007 348 V 399"/>
+  <path class="flow" d="M 902 472 H 850"/>
+  <path class="flow" d="M 737 408 V 356"/>
+  <path class="flow-muted" d="M 632 472 C 570 472 536 514 500 552"/>
+  <path class="flow-muted" d="M 362 596 H 310"/>
+
+  <rect class="pill" x="315" y="250" width="34" height="68" fill="#ffffff" opacity="0.92"/>
+  <text class="card-small" x="322" y="289" transform="rotate(-90 322 289)">truth</text>
+
+  <rect class="pill" x="583" y="239" width="39" height="90" fill="#ffffff" opacity="0.92"/>
+  <text class="card-small" x="593" y="304" transform="rotate(-90 593 304)">measurements</text>
+
+  <rect class="pill" x="854" y="246" width="37" height="77" fill="#ffffff" opacity="0.92"/>
+  <text class="card-small" x="863" y="301" transform="rotate(-90 863 301)">estimate</text>
+
+  <text class="card-small" x="1030" y="384">commands</text>
+  <text class="card-small" x="768" y="384">feedback</text>
+  <text class="card-small" x="538" y="514">plots and GIF</text>
+</svg>
