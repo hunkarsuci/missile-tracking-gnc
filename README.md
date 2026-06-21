@@ -39,6 +39,7 @@ The implemented simulations focus on 2D target tracking with position, velocity,
 
 ---
 
+
 ## Implemented Blocks
 
 ### Block 0 - Constant-Velocity Target Model
@@ -184,10 +185,14 @@ Save the 3D animation as a GIF:
 python src/block4_visualization/animate_3d_tracking.py --save assets/tracking_3d.gif --no-show
 ```
 
+## Continuous Integration
+
+This repository uses GitHub Actions via `.github/workflows/tests.yml` to run the project test workflow. The test status badge at the top of this README links to the latest workflow runs.
+
+
 ## Repository Structure
 
 ```text
-<<<<<<< HEAD
 src/
   block0_modeling/
     simulate_cv_target.py             # Target truth model + noisy measurements
@@ -227,7 +232,12 @@ assets/
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-=======
+
+
+````md
+## Project Structure
+
+```text
 missile-tracking-gnc/
 │
 ├── src/
