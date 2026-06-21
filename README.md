@@ -150,11 +150,11 @@ This block demonstrates nonlinear sensor fusion using radar-style measurements.
 - 3D radar EKF demo with range, azimuth, elevation, a 0-to-10 km climb, an 8 km dip, a 9 km recovery, and horizontal continuation
 - Animated tracking visualization for GitHub demos and presentations
 
-## Quick Start
+## Create an environment and install dependencies:
 
 ```bash
 python -m venv .venv
-.venv\ Scripts\ activate
+.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
